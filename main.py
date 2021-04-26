@@ -1,46 +1,30 @@
 # Student: Victoria Cadogan
 from dataclasses import dataclass, field
-import pandas as pd
-import os
 
 
 @dataclass
 class Products:
-    index: int
     name: str
     unit_price: float
     type: str
 
 
-def __get_tax(self, state):
-    if state == 'MA':
+def __get_tax(state):
+    if state.upper() == 'MA':
         return 0.0625
-    elif state == 'ME':
+    elif state.upper() == 'ME':
         return 0.055
-    else:  # if it's NH
+    else:
         return 1
 
 
-def __get_products():
-    this_folder = os.path.dirname(os.path.abspath(__file__))
-    file_to_open = os.path.join(this_folder, "products.xlsx")
-    wb = pd.read_excel(file_to_open, header=0)
-    df = pd.DataFrame(wb)
-    all_items = df[['Item', 'Price', 'Type']]
-    products = []
-    for i in range(len(all_items)):
-        products.append(all_items.iloc[i].values.tolist())
-    return products
-
-
-def checkout():
-    j = 1
-    print('ID\tItem\t\t\tPrice\t\t\tType\n')
-    for i in __get_products():
-        items = Products(index=j, name=i[0], unit_price=i[1], type=i[2])
-        print(str(j), items.name, "\t||\t", items.unit_price, "||\t", items.type)
-        j += 1
-    sell = input("Enter the ID of the items you wish to buy followed by a comma:\n")
-
-
-checkout()
+def checkout(purchase: Products, state):
+    if purchase.type.lower() == 'wic eligible' or purchase.type.lower() == 'clothing':
+        total = purchase.unit_price
+        return total
+    elif state.upper() not in ('MA', 'ME', 'NH'):
+        print("Please enter MA, ME or NH")
+        return ''
+    else:
+        total = round(purchase.unit_price + (purchase.unit_price * __get_tax(state)), 2)
+        return total
