@@ -15,7 +15,7 @@ def __get_tax(state):
     elif state.upper() == 'ME':
         return 0.055
     else:
-        return 1
+        return 0
 
 
 def checkout(purchase: Products, state):
